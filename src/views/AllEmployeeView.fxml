@@ -20,13 +20,13 @@
                   <Font name="System Bold Italic" size="60.0" />
                </font>
             </Label>
-            <TableView prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="employeeTable" prefHeight="200.0" prefWidth="200.0">
               <columns>
-                <TableColumn prefWidth="225.0" text="First Name" />
-                <TableColumn prefWidth="225.0" text="Last Name" />
-                  <TableColumn prefWidth="150.0" text="Date Of Birth" />
-                  <TableColumn prefWidth="150.0" text="Position" />
-                  <TableColumn prefWidth="150.0" text="Employee Number" />
+                <TableColumn fx:id="firstNameColumn" prefWidth="225.0" text="First Name" />
+                <TableColumn fx:id="lastNameColumn" prefWidth="225.0" text="Last Name" />
+                  <TableColumn fx:id="dobColumn" prefWidth="150.0" text="Date Of Birth" />
+                  <TableColumn fx:id="positionColumn" prefWidth="150.0" text="Position" />
+                  <TableColumn fx:id="employeeNumColumn" prefWidth="150.0" text="Employee Number" />
               </columns>
             </TableView>
             <HBox alignment="CENTER" prefHeight="35.0" prefWidth="960.0" spacing="20.0">

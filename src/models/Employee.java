@@ -10,6 +10,8 @@ import java.time.Period;
  * @author JWright
  */
 public abstract class Employee {
+    private static int nextEmployeeNum = 1000001;
+    private int employeeNum;
     private String firstName, lastName, socialInsuranceNum, position;
     private LocalDate dateOfBirth, startDate, endDate;
     private boolean administrator;
@@ -20,6 +22,12 @@ public abstract class Employee {
         this.socialInsuranceNum = socialInsuranceNum;
         this.dateOfBirth = dateOfBirth;
         startDate = LocalDate.now();
+        employeeNum = nextEmployeeNum;
+        nextEmployeeNum++;
+    }
+
+    public int getEmployeeNum() {
+        return employeeNum;
     }
 
     public String getFirstName() {
