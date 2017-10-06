@@ -31,7 +31,7 @@
             </TableView>
             <HBox alignment="CENTER" prefHeight="35.0" prefWidth="960.0" spacing="20.0">
                <children>
-                  <Button mnemonicParsing="false" prefWidth="170.0" text="Create new Employee" />
+                  <Button mnemonicParsing="false" onAction="#createNewEmployeeButtonPushed" prefWidth="170.0" text="Create new Employee" />
                   <Button mnemonicParsing="false" prefWidth="170.0" text="Edit Employee" />
                </children>
             </HBox>
