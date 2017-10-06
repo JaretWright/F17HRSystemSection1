@@ -3,13 +3,17 @@ package views;
 
 import java.net.URL;
 import java.time.LocalDate;
+import java.time.Month;
 import java.util.ResourceBundle;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
 import models.Employee;
+import models.HourlyEmployee;
 
 /**
  * FXML Controller class
@@ -40,8 +44,20 @@ public class AllEmployeeViewController implements Initializable {
         employeeNumColumn.setCellValueFactory(new PropertyValueFactory<Employee, Integer>("employeeNum"));
        
         //load dummy data
-        employeeTable.setItems();
-       
+        employeeTable.setItems(getEmployees());
     }    
     
+    public ObservableList<Employee> getEmployees()
+    {
+        //define an observable list
+        ObservableList<Employee> employees = FXCollections.observableArrayList();
+        
+        //add employees to the list
+        employees.add(new HourlyEmployee("Jaret", "Mygosh", "123 456 789", LocalDate.of(1992, Month.MARCH, 15)));
+        employees.add(new HourlyEmployee("Adam", "Sandler", "123 456 900", LocalDate.of(1966, Month.APRIL, 15)));
+        employees.add(new HourlyEmployee("Bert", "Sesame", "123 555 900", LocalDate.of(1948, Month.APRIL, 22)));
+        
+        //return the list
+        return employees;
+    }
 }
