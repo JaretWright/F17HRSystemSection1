@@ -20,7 +20,6 @@ public class HourlyEmployee extends Employee{
         super(firstName, lastName, socialInsuranceNum, dateOfBirth);
         payRate = MINIMUM_WAGE;
         hoursWorked = 0;
-        insertIntoDB();
     }
 
     public HourlyEmployee(double payRate, String firstName, String lastName, String socialInsuranceNum, LocalDate dateOfBirth) {
@@ -69,7 +68,7 @@ public class HourlyEmployee extends Employee{
                
         try{
             //1. connect to the database
-            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/hrSystem/employees?useSSL=false",
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/hrSystem?useSSL=false",
                                         "student", "student");
 
             //2. create a String that holds our sql query with ? for user inputs

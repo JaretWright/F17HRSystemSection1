@@ -34,17 +34,23 @@ public class CreateEmployeeViewController implements Initializable {
         employees = listOfEmp;
     }
     
-    public void createNewEmployeeButtonPushed()
+    public void createNewEmployeeButtonPushed(ActionEvent event) throws IOException
     {
         HourlyEmployee newEmp;
-        try {
+        try{
             newEmp = new HourlyEmployee(firstNameTextField.getText(), 
                     lastNameTextField.getText(),
                     sinTextField.getText(),
                     dob.getValue());
+            newEmp.insertIntoDB();
+            
+            //change scenes to the all employee view
+            SceneChanger sc = new SceneChanger();
+            sc.changeScenes(event, "AllEmployeeView.fxml", "All Employees");
         } catch (SQLException ex) {
             Logger.getLogger(CreateEmployeeViewController.class.getName()).log(Level.SEVERE, null, ex);
         }
+        
     }
        
     /**
