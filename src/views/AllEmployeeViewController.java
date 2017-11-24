@@ -1,8 +1,14 @@
 
 package views;
 
+
 import java.io.IOException;
 import java.net.URL;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.time.LocalDate;
 import java.time.Month;
 import java.util.ResourceBundle;
@@ -51,41 +57,67 @@ public class AllEmployeeViewController implements Initializable {
         employeeNumColumn.setCellValueFactory(new PropertyValueFactory<Employee, Integer>("employeeNum"));
        
         //load dummy data
-        employeeTable.setItems(getEmployees());
+        try{
+            employeeTable.setItems(getEmployees());
+        }
+        catch (SQLException e)
+        {
+            System.err.println(e);
+        }
     }    
     
     public void createNewEmployeeButtonPushed(ActionEvent event) throws IOException
     {
-        //load a new scene
-        FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getResource("CreateEmployeeView.fxml"));
-        Parent parent = loader.load();
-        Scene newEmployeeScene = new Scene(parent);
-        
-        //access the controller of the newEmployeeScene and send over
-        //the current list of employees
-        CreateEmployeeViewController controller = loader.getController();
-        controller.initialData(employeeTable.getItems());
-        
-        //Get the current "stage" (aka window) 
-        Stage stage = (Stage)((Node)event.getSource()).getScene().getWindow();
-        
-        //change the scene to the new scene
-        stage.setTitle("Create new employee");
-        stage.setScene(newEmployeeScene);
-        stage.show();
+        SceneChanger sc = new SceneChanger();
+        sc.changeScenes(event, "CreateEmployeeView.fxml", "Create new employee");
     }
     
-    public ObservableList<Employee> getEmployees()
+    public ObservableList<Employee> getEmployees() throws SQLException
     {
         //define an observable list
         ObservableList<Employee> employees = FXCollections.observableArrayList();
         
-        //add employees to the list
-        employees.add(new HourlyEmployee("Jaret", "Mygosh", "123 456 789", LocalDate.of(1992, Month.MARCH, 15)));
-        employees.add(new HourlyEmployee("Adam", "Sandler", "123 456 900", LocalDate.of(1966, Month.APRIL, 15)));
-        employees.add(new HourlyEmployee("Bert", "Sesame", "123 555 900", LocalDate.of(1948, Month.APRIL, 22)));
+        //Read from the DB andd add employees to the list
+        //connect to the DB
+        Connection conn = null;  //connects to DB
+        Statement statement = null; //is the SQL statement we want to run
+        ResultSet resultSet = null; //is the response from the DB
         
+        try{
+            //1. connect to the database
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/hrSystem?useSSL=false", 
+                                                "student", "student");
+            
+            //2.  create a statement
+            statement = conn.createStatement();
+            
+            //3.  create the sql query
+            resultSet = statement.executeQuery("SELECT * FROM employees");
+            
+            //4.  create emplpoyee objects from each record
+            while (resultSet.next())
+            {
+                employees.add(new HourlyEmployee(resultSet.getString("firstName"), 
+                                                 resultSet.getString("lastName"),
+                                                 resultSet.getString("socialInsuranceNumber"),
+                                                 resultSet.getDate("dateOfBirth").toLocalDate()));
+            }
+        } 
+        catch (SQLException e)
+        {
+            System.err.println(e);
+        }
+        finally
+        {
+            if (conn != null)
+                conn.close();
+            if (statement != null)
+                statement.close();
+            if (resultSet != null)
+                resultSet.close();
+        }
+        
+     
         //return the list
         return employees;
     }
