@@ -34,7 +34,7 @@
             <DatePicker fx:id="dob" GridPane.columnIndex="1" GridPane.rowIndex="3" />
          </children>
       </GridPane>
-      <Button layoutX="347.0" layoutY="433.0" mnemonicParsing="false" onAction="#createNewEmployeeButtonPushed" text="Create New Employee" />
-      <Button layoutX="534.0" layoutY="433.0" mnemonicParsing="false" onAction="#cancelButtonPushed" text="Cancel" />
+      <Button fx:id="createButton" layoutX="347.0" layoutY="433.0" mnemonicParsing="false" onAction="#createNewEmployeeButtonPushed" prefWidth="166.0" text="Create New Employee" />
+      <Button layoutX="534.0" layoutY="433.0" mnemonicParsing="false" onAction="#cancelButtonPushed" prefWidth="166.0" text="Cancel" />
    </children>
 </AnchorPane>

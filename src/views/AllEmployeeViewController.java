@@ -21,6 +21,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.cell.PropertyValueFactory;
@@ -42,6 +43,7 @@ public class AllEmployeeViewController implements Initializable {
     @FXML private TableColumn<Employee, LocalDate> dobColumn;
     @FXML private TableColumn<Employee, String> positionColumn;
     @FXML private TableColumn<Employee, Integer> employeeNumColumn;
+    @FXML private Button editButton;
     
     
     
@@ -55,7 +57,9 @@ public class AllEmployeeViewController implements Initializable {
         dobColumn.setCellValueFactory(new PropertyValueFactory<Employee, LocalDate>("dateOfBirth"));
         positionColumn.setCellValueFactory(new PropertyValueFactory<Employee, String>("position"));
         employeeNumColumn.setCellValueFactory(new PropertyValueFactory<Employee, Integer>("employeeNum"));
-       
+        
+        editButton.setDisable(true);
+        
         //load dummy data
         try{
             employeeTable.setItems(getEmployees());
@@ -72,6 +76,12 @@ public class AllEmployeeViewController implements Initializable {
         sc.changeScenes(event, "CreateEmployeeView.fxml", "Create new employee");
     }
     
+    public void tableSelected()
+    {
+        if (employeeTable.getSelectionModel().getSelectedItem() != null)
+            editButton.setDisable(false);
+        
+    }
     public ObservableList<Employee> getEmployees() throws SQLException
     {
         //define an observable list
@@ -97,10 +107,12 @@ public class AllEmployeeViewController implements Initializable {
             //4.  create emplpoyee objects from each record
             while (resultSet.next())
             {
-                employees.add(new HourlyEmployee(resultSet.getString("firstName"), 
+                Employee newEmp = new HourlyEmployee(resultSet.getString("firstName"), 
                                                  resultSet.getString("lastName"),
                                                  resultSet.getString("socialInsuranceNumber"),
-                                                 resultSet.getDate("dateOfBirth").toLocalDate()));
+                                                 resultSet.getDate("dateOfBirth").toLocalDate());
+                newEmp.setEmployeeNum(resultSet.getInt("employeeNum"));
+                employees.add(newEmp);
             }
         } 
         catch (SQLException e)
@@ -120,5 +132,22 @@ public class AllEmployeeViewController implements Initializable {
      
         //return the list
         return employees;
+    }
+    
+    /**
+     * This method will validate that an employee is selected and go to 
+     * the view to edit their profile
+     */
+    public void editButtonPushed(ActionEvent event) throws IOException
+    {
+        SceneChanger sc = new SceneChanger();
+        
+        //select volunteer from the table
+        Employee employee = employeeTable.getSelectionModel().getSelectedItem();
+        
+        //create an instance of the CreateEmployeeViewController and pass it to 
+        //our scene changer
+        CreateEmployeeViewController controller = new CreateEmployeeViewController();
+        sc.changeScenes(event, "CreateEmployeeView.fxml", "Edit employee", employee, controller);
     }
 }

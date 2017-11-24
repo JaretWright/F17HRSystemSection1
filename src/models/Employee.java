@@ -1,5 +1,10 @@
 package models;
 
+import java.sql.Connection;
+import java.sql.Date;
+import java.sql.DriverManager;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.time.LocalDate;
 import java.time.Period;
 
@@ -10,7 +15,6 @@ import java.time.Period;
  * @author JWright
  */
 public abstract class Employee {
-    private static int nextEmployeeNum = 1000001;
     private int employeeNum;
     private String firstName, lastName, socialInsuranceNum, position;
     private LocalDate dateOfBirth, startDate, endDate;
@@ -20,10 +24,12 @@ public abstract class Employee {
         setFirstName(firstName);
         setLastName(lastName);
         this.socialInsuranceNum = socialInsuranceNum;
-        this.dateOfBirth = dateOfBirth;
+        setDateOfBirth(dateOfBirth);
         startDate = LocalDate.now();
-        employeeNum = nextEmployeeNum;
-        nextEmployeeNum++;
+    }
+
+    public void setEmployeeNum(int employeeNum) {
+        this.employeeNum = employeeNum;
     }
 
     public int getEmployeeNum() {
@@ -79,7 +85,7 @@ public abstract class Employee {
     }
 
     public void setDateOfBirth(LocalDate dateOfBirth) {
-        int age = Period.between(LocalDate.now(), dateOfBirth).getYears();
+        int age = Period.between(dateOfBirth, LocalDate.now()).getYears();
         
         if (age <= 100 && age >= 10)
             this.dateOfBirth = dateOfBirth;
@@ -115,4 +121,54 @@ public abstract class Employee {
     }
     
     public abstract double calculatePay(); 
+    
+    /**
+     * This will update the hourly employee in the database
+     */
+    public void updateInDB() throws SQLException
+    {
+        Connection conn = null;
+        PreparedStatement statement = null;
+               
+        try{
+            //1. connect to the database
+            conn = DriverManager.getConnection("jdbc:mysql://localhost:3306/hrSystem?useSSL=false",
+                                        "student", "student");
+
+            //2. create a String that holds our sql query with ? for user inputs
+            String sql= "UPDATE employees " +
+                        "SET firstName = ?, " +
+                        "    lastName = ?, " +
+                        "    socialInsuranceNumber = ?, " +
+                        "    dateOfBirth = ? " +
+                        "WHERE employeeNum = ?";
+
+            //3. prepare the query
+            statement = conn.prepareStatement(sql);
+
+            //4. convert the birthday into a SQL date
+            Date dob = Date.valueOf(getDateOfBirth());
+
+            //5. bind the values to the parameters
+            statement.setString(1, getFirstName());
+            statement.setString(2, getLastName());
+            statement.setString(3, getSocialInsuranceNum());
+            statement.setDate(4, dob);
+            statement.setInt(5, getEmployeeNum());
+
+            //6. execute the update/insert
+            statement.executeUpdate();
+        }
+        catch (SQLException e)
+        {
+            System.err.println(e);
+        }
+        finally
+        {
+            if (conn != null)
+                conn.close();
+            if (statement != null)
+                statement.close();
+        }
+    }
 }

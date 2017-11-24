@@ -10,8 +10,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-
-<AnchorPane id="AnchorPane" prefHeight="800.0" prefWidth="1000.0" xmlns:fx="http://javafx.com/fxml/1" xmlns="http://javafx.com/javafx/8.0.111" fx:controller="views.AllEmployeeViewController">
+<AnchorPane id="AnchorPane" prefHeight="800.0" prefWidth="1000.0" xmlns="http://javafx.com/javafx/8.0.141" xmlns:fx="http://javafx.com/fxml/1" fx:controller="views.AllEmployeeViewController">
    <children>
       <VBox alignment="TOP_CENTER" prefHeight="800.0" prefWidth="1000.0" spacing="20.0" AnchorPane.bottomAnchor="0.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="0.0">
          <children>
@@ -20,7 +19,7 @@
                   <Font name="System Bold Italic" size="60.0" />
                </font>
             </Label>
-            <TableView fx:id="employeeTable" prefHeight="200.0" prefWidth="200.0">
+            <TableView fx:id="employeeTable" onMouseClicked="#tableSelected" prefHeight="200.0" prefWidth="200.0">
               <columns>
                 <TableColumn fx:id="firstNameColumn" prefWidth="225.0" text="First Name" />
                 <TableColumn fx:id="lastNameColumn" prefWidth="225.0" text="Last Name" />
@@ -32,7 +31,7 @@
             <HBox alignment="CENTER" prefHeight="35.0" prefWidth="960.0" spacing="20.0">
                <children>
                   <Button mnemonicParsing="false" onAction="#createNewEmployeeButtonPushed" prefWidth="170.0" text="Create new Employee" />
-                  <Button mnemonicParsing="false" prefWidth="170.0" text="Edit Employee" />
+                  <Button fx:id="editButton" mnemonicParsing="false" onAction="#editButtonPushed" prefWidth="170.0" text="Edit Employee" />
                </children>
             </HBox>
          </children>

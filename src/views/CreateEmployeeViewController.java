@@ -10,6 +10,7 @@ import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.scene.control.Button;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import models.Employee;
@@ -20,7 +21,7 @@ import models.HourlyEmployee;
  *
  * @author JWright
  */
-public class CreateEmployeeViewController implements Initializable {
+public class CreateEmployeeViewController implements Initializable, ControllerInterface {
 
     private ObservableList<Employee> employees;
     
@@ -28,6 +29,9 @@ public class CreateEmployeeViewController implements Initializable {
     @FXML private TextField lastNameTextField;
     @FXML private TextField sinTextField;
     @FXML private DatePicker dob;
+    @FXML private Button createButton;
+    
+    private Employee employee;
     
     public void initialData(ObservableList<Employee> listOfEmp)
     {
@@ -36,20 +40,43 @@ public class CreateEmployeeViewController implements Initializable {
     
     public void createNewEmployeeButtonPushed(ActionEvent event) throws IOException
     {
-        HourlyEmployee newEmp;
-        try{
-            newEmp = new HourlyEmployee(firstNameTextField.getText(), 
+        if (employee == null)  //if employee is null, it's a new employee
+        {
+            HourlyEmployee newEmp;
+            try{
+                newEmp = new HourlyEmployee(firstNameTextField.getText(), 
                     lastNameTextField.getText(),
                     sinTextField.getText(),
                     dob.getValue());
-            newEmp.insertIntoDB();
+                newEmp.insertIntoDB();
             
-            //change scenes to the all employee view
-            SceneChanger sc = new SceneChanger();
-            sc.changeScenes(event, "AllEmployeeView.fxml", "All Employees");
-        } catch (SQLException ex) {
-            Logger.getLogger(CreateEmployeeViewController.class.getName()).log(Level.SEVERE, null, ex);
+                //change scenes to the all employee view
+                SceneChanger sc = new SceneChanger();
+                sc.changeScenes(event, "AllEmployeeView.fxml", "All Employees");
+            } catch (SQLException ex) {
+                Logger.getLogger(CreateEmployeeViewController.class.getName()).log(Level.SEVERE, null, ex);
+            }
         }
+        else    //must be an update to an existing employee
+        {
+            //update the employee loaded in the scene with the latest from the
+            //GUI fields
+            employee.setFirstName(firstNameTextField.getText());
+            employee.setLastName(lastNameTextField.getText());
+            employee.setSocialInsuranceNum(sinTextField.getText());
+            employee.setDateOfBirth(dob.getValue());
+            
+            try{
+                employee.updateInDB();
+                
+                //change scenes to the all employee view
+                SceneChanger sc = new SceneChanger();
+                sc.changeScenes(event, "AllEmployeeView.fxml", "All Employees");
+            } catch (SQLException ex) {
+                Logger.getLogger(CreateEmployeeViewController.class.getName()).log(Level.SEVERE, null, ex);
+            }
+        }   
+        
         
     }
        
@@ -67,7 +94,19 @@ public class CreateEmployeeViewController implements Initializable {
      */
     @Override
     public void initialize(URL url, ResourceBundle rb) {
-        // TODO
+       
     }    
+
+    @Override
+    public void preloadData(Employee employee) {
+        this.employee=employee;
+        this.firstNameTextField.setText(employee.getFirstName());
+        this.lastNameTextField.setText(employee.getLastName());
+        this.sinTextField.setText(employee.getSocialInsuranceNum());
+        this.dob.setValue(employee.getDateOfBirth());
+        
+        //update scene objects
+        this.createButton.setText("Save");
+    }
     
 }
