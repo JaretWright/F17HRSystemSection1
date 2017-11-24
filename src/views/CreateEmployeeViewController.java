@@ -2,7 +2,10 @@ package views;
 
 import java.io.IOException;
 import java.net.URL;
+import java.sql.SQLException;
 import java.util.ResourceBundle;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -33,12 +36,15 @@ public class CreateEmployeeViewController implements Initializable {
     
     public void createNewEmployeeButtonPushed()
     {
-        HourlyEmployee newEmp = new HourlyEmployee(firstNameTextField.getText(), 
-                                                    lastNameTextField.getText(), 
-                                                    sinTextField.getText(), 
-                                                    dob.getValue());
-        System.out.println(newEmp);
-        employees.add(newEmp);
+        HourlyEmployee newEmp;
+        try {
+            newEmp = new HourlyEmployee(firstNameTextField.getText(), 
+                    lastNameTextField.getText(),
+                    sinTextField.getText(),
+                    dob.getValue());
+        } catch (SQLException ex) {
+            Logger.getLogger(CreateEmployeeViewController.class.getName()).log(Level.SEVERE, null, ex);
+        }
     }
        
     /**
